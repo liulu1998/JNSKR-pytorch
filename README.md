@@ -7,9 +7,9 @@ In SIGIR'20.*
 
 You can find TensorFlow implementation by the paper authors [here](https://github.com/chenchongthu/JNSKR)
 
+<br/>
 
-
-**Please cite the following paper if you use their codes. **
+**Please cite the following paper if you use their codes.**
 
 ```
 @inproceedings{chen2020jointly,
