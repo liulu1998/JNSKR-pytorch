@@ -45,8 +45,8 @@ class JNSKR(nn.Module):
         self.weight_cf_loss = args.coefficient[0]
         self.weight_kg_loss = args.coefficient[1]
         # weight of L2 Regularization
-        self.weight_kg_l2 = args.lambda_bilinear[0]
-        self.weight_cf_l2 = args.lambda_bilinear[1]
+        self.weight_cf_l2 = args.lambda_bilinear[0]
+        self.weight_kg_l2 = args.lambda_bilinear[1]
 
         # Dropout
         self.dropout_kg = nn.Dropout(p=args.dropout_kg, inplace=False)

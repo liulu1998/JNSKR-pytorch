@@ -8,7 +8,6 @@ def parse_JNSKR_args():
                         help='Choose a dataset from {amazon-book, yelp2018}')
     parser.add_argument('--evaluate_every', type=int, default=5,
                         help='Interval of evaluation.')
-    # batch size
     parser.add_argument('--batch_size', nargs='?', type=int, default=256,
                         help='batch_size')
     parser.add_argument('--epochs', type=int, default=105,
@@ -17,15 +16,10 @@ def parse_JNSKR_args():
                         help='Embedding size.')
     parser.add_argument('--lr', type=float, default=0.05,
                         help='Learning rate.')
-    parser.add_argument('--weight')
-    parser.add_argument('--dropout', type=float, default=[0.8, 0.7],
-                        help='dropout keep_prob')
     parser.add_argument('--coefficient', type=float, default=[1.0, 0.01],
-                        help='weight of multi-task')
-    parser.add_argument('--lambda_bilinear', type=float, default=[1e-5, 1],
-                        help='weight of regul')
-    parser.add_argument('--weight_l2', type=float, default=1e-5,
-                        help='weight of L2 regularization')
+                        help='weight of multi-task, CF and KG')
+    parser.add_argument('--lambda_bilinear', type=float, default=[1, 1e-5],
+                        help='weight of L2 regularization, CF and KG')
     # for amazon-book, dropout_kg = 0.2
     # for yelp-2018, dropout_kg = 0.1
     parser.add_argument('--dropout_kg', type=float, default=0.2,
