@@ -56,7 +56,7 @@ def test_one_user(x):
     return get_performance(user_pos_test, r, auc, Ks)
 
 
-def evaluate_multiprocessing(model, users_to_test, item_test, r_test, t_test, K=[10, 20, 40]):
+def evaluate(model, users_to_test, item_test, r_test, t_test, K=[10, 20, 40]):
     """
     :param model: JNSKR model
     :param users_to_test: users in test set
@@ -206,7 +206,7 @@ def train(args):
             logging.info(f"epoch {epoch + 1} evaluating ...")
             model.eval()
 
-            val_result = evaluate_multiprocessing(
+            val_result = evaluate(
                 model=model,
                 users_to_test=np.array(list(test_set.test_user_dict.keys())),
                 item_test=test_set.item_ids,
