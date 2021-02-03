@@ -24,18 +24,22 @@ def early_stopping(recall_list, evaluate_every: int, stopping_steps):
         should_stop = True
     else:
         should_stop = False
-    return best_recall, should_stop
+    best_epoch = evaluate_every * (best_step + 1)
+    return best_recall, best_epoch, should_stop
 
 
-def checkpoint(epoch, model, optimizer, val_loss):
+def checkpoint(epoch, model, optimizer, **kwargs):
+    """
+    save checkpoint, including model weights and optimizer params
+    """
     state = {
         'epoch': epoch,
         # only save parameters without structure
-        'model': model,
+        'model': model.state_dict(),
         'optimizer': optimizer.state_dict(),
-        'val_loss': val_loss,
     }
-    file_path = f"./result/checkpoint.pth"
+    info = ''.join(f"-{k}_{v:.4f}" for k, v in kwargs.items())
+    file_path = f"checkpoint_epoch-{epoch}{info}.pth"
     torch.save(state, file_path)
 
 

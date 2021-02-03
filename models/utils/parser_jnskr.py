@@ -6,6 +6,7 @@ def parse_JNSKR_args():
 
     parser.add_argument('--data_name', nargs='?', default='amazon-book',
                         help='Choose a dataset from {amazon-book, yelp2018}')
+    parser.add_argument('--pretrain', type=int, default=0, help="whether use pretrained model")
     parser.add_argument('--evaluate_every', type=int, default=5,
                         help='Interval of evaluation.')
     parser.add_argument('--batch_size', nargs='?', type=int, default=256,

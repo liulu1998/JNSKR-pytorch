@@ -1,7 +1,6 @@
 import os
 import random
 import multiprocessing
-import torch
 from torch import optim
 from torch.utils.data import DataLoader
 
@@ -160,6 +159,7 @@ def train(args):
     epochs = args.epochs
     evaluate_every = args.evaluate_every
     patience = args.stop_patience
+    best_epoch = -1
 
     result = {
         "epochs": epochs, "evaluate_every": evaluate_every, "train_loss": [], "val_loss": [],
@@ -215,24 +215,34 @@ def train(args):
                 K=Ks
             )
 
-            recall_info = f"    [test] epoch {epoch+1} Recall"
+            recall_info = f"[test] epoch {epoch+1} Recall"
             for i, (k, r) in enumerate(zip(Ks, val_result["recall"])):
                 recall_info += f" @{k}: {r}"
                 result["recall"][i].append(r)
             logging.info(recall_info)
 
-            ndcg_info = f"    [test] epoch {epoch+1}   NDCG"
+            ndcg_info = f"[test] epoch {epoch+1}   NDCG"
             for i, (k, r) in enumerate(zip(Ks, val_result["ndcg"])):
                 ndcg_info += f" @{k}: {r}"
                 result['ndcg'][i].append(r)
             logging.info(ndcg_info)
 
-            # monitor test NDCG@20
-            best_ndcg, should_stop = early_stopping(
-                result['ndcg'][1],
+            # monitor NDCG@10
+            best_ndcg, tmp_best_epoch, should_stop = early_stopping(
+                result['ndcg'][0],
                 evaluate_every=evaluate_every,
                 stopping_steps=patience
             )
+
+            if tmp_best_epoch != best_epoch:
+                best_epoch = tmp_best_epoch
+                logging.info(f"save checkpoint at epoch {epoch+1}")
+                checkpoint(
+                    epoch+1, model, optimizer,
+                    recall=val_result['recall'][-1],
+                    ndcg=val_result['ndcg'][-1]
+                )
+
             if should_stop:
                 result['epochs'] = epoch + 1
                 logging.info(f"early-stop at epoch {epoch+1}")
@@ -248,14 +258,57 @@ def train(args):
         cur_list = result['ndcg'][i]
         logging.info(f"max NDCG@{k}: {max(cur_list)} at epoch {evaluate_every * cur_list.index(max(cur_list))}")
 
+    logging.info(f"best epoch: {best_epoch}")
     visualize_result(result, show=False)
     return model
 
 
 if __name__ == '__main__':
-    torch.cuda.empty_cache()
-    set_seed(1119)
+    set_seed(2021)
 
     args = parse_JNSKR_args()
+    if args.pretrain != 1:
+        model = train(args)
+    else:
+        from models.utils.evaluate import evaluate_torch
+        chk = torch.load("checkpoint_epoch-30-recall_0.2196-ndcg_0.1411.pth")
+        model = chk["model"]
 
-    model = train(args)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # train data
+        dataset = DatasetJNSKR(args)
+
+        n_users, n_items, n_relations, n_entities, max_i_u, max_i_r, negative_c, negative_ck \
+            = dataset.stat()
+
+        model = JNSKR(
+            n_users=n_users, n_items=n_items, n_relations=n_relations, n_entities=n_entities,
+            max_i_u=max_i_u, max_i_r=max_i_r,
+            negative_c=negative_c, negative_ck=negative_ck,
+            args=args
+        )
+        model.load_state_dict(chk["model"])
+        model.to(device)
+        model.eval()
+
+        # test data
+        item_ids = torch.arange(n_items, dtype=torch.long).to(device)
+        test_set = TestDataset(args, item_ids)
+
+        relation_test, tail_test = dataset.prepare_test()
+        relation_test = relation_test.to(device)
+        tail_test = tail_test.to(device)
+
+        for k in [10, 20, 40]:
+            recall, ndcg = evaluate_torch(
+                model=model,
+                train_user_dict=test_set.train_user_dict,
+                test_user_dict=test_set.test_user_dict,
+                user_ids_batches=test_set.user_ids_batches,
+                item_ids=test_set.item_ids,
+                r_test=relation_test,
+                t_test=tail_test,
+                Ks=k
+            )
+            print(f"recall@{k}: {recall}  ndcg@{k}: {ndcg}")
