@@ -61,7 +61,7 @@ matplotlib == 3.3.2
 
 | Model         | Best Epoch | Recall@10 | Recall@20 | Recall@40 | NDCG@10 | NDCG@20 | NDCG@40 |
 | ------------- | :--------: | :-------: | :-------: | :-------: | :-----: | :-----: | :-----: |
-| JNSKR-pytorch |     29     |  0.1079   |  0.1572   |  0.2194   | 0.0938  | 0.1165  | 0.1412  |
+| JNSKR-pytorch |     30     |  0.1079   |  0.1572   |  0.2194   | 0.0938  | 0.1165  | 0.1412  |
 
 Refer to [log77.log](./log/JNSKR/amazon-book/emb_size64_lr0.05/log77.log) for more details.
 
@@ -69,6 +69,6 @@ Refer to [log77.log](./log/JNSKR/amazon-book/emb_size64_lr0.05/log77.log) for mo
 
 | Model         | Best Epoch | Recall@10 | Recall@20 | Recall@40 | NDCG@10 | NDCG@20 | NDCG@40 |
 | ------------- | :--------: | :-------: | :-------: | :-------: | :-----: | :-----: | :-----: |
-| JNSKR-pytorch |     60     |  0.0453   |  0.0750   |  0.1209   | 0.0808  | 0.1081  | 0.1430  |
+| JNSKR-pytorch |     65     |  0.0453   |  0.0750   |  0.1209   | 0.0808  | 0.1081  | 0.1430  |
 
 Refer to [log0.log](./log/JNSKR/yelp2018/emb_size64_lr0.05/log0.log) for more details.

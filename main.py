@@ -252,11 +252,11 @@ def train(args):
 
     for i, k in enumerate(Ks):
         cur_list = result['recall'][i]
-        logging.info(f"max Recall@{k}: {max(cur_list)} at epoch {evaluate_every * cur_list.index(max(cur_list))}")
+        logging.info(f"max Recall@{k}: {max(cur_list)} at epoch {evaluate_every * (1 + cur_list.index(max(cur_list)))}")
 
     for i, k in enumerate(Ks):
         cur_list = result['ndcg'][i]
-        logging.info(f"max NDCG@{k}: {max(cur_list)} at epoch {evaluate_every * cur_list.index(max(cur_list))}")
+        logging.info(f"max NDCG@{k}: {max(cur_list)} at epoch {evaluate_every * (1 + cur_list.index(max(cur_list)))}")
 
     logging.info(f"best epoch: {best_epoch}")
     visualize_result(result, show=False)
