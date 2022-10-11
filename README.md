@@ -37,7 +37,7 @@ You can find TensorFlow implementation by the **paper authors** [here](https://g
 
 ## Environment Requirements
 
-The code has been tested under Python 3.8.5.
+The code has been tested under Python 3.8.5, on Linux system.
 
 Required packages are as follows:
 
